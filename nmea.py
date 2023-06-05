@@ -48,7 +48,7 @@ class nmea:
         for item in payload:
             sentence += "," + str(item)
         checksum = self.create_checksum(sentence)
-        sentence += checksum +"\n"
+        sentence += checksum +"\r\n"
         if len(sentence) > 82:
             print("Sentence too long")
             return "-1"
@@ -141,7 +141,7 @@ class xdr:
             payload = self.xdr_payload
         
         output = nm.construct_sentence(talkerid, "XDR", payload)
-        self.clear_xdr_payload
+        self.clear_xdr_payload()
         return output
     
     def append_xdr_payload(self, transducer_type: str, measurement: float, unit: str, name: str) -> list:
@@ -165,10 +165,11 @@ class xdr:
     def send_weather_data(self, temperature: float, pressure: float, humidity: float) -> str:
         """
         Create an XDR NMEA sentence for weather data.
-        Temperature in degrees Celsuis, Pressure in hPa and relative humidity in %
+        Temperature in degrees Celsuis, pressure in Bar and relative humidity in %
         """
         self.append_xdr_payload("C", temperature, "C", "AIRTEMP")
-        self.append_xdr_payload("P", (pressure / 100), "P", "PRESSURE")
+        self.append_xdr_payload("P", pressure, "B", "BARO")
+        self.append_xdr_payload("P", (pressure / 100), "P", "BARO")
         self.append_xdr_payload("H", humidity, "P", "HUMIDITY")
-        sentence = self.construct_xdr_sentence("$WI", self.xdr_payload)
+        sentence = self.construct_xdr_sentence("$YX", self.xdr_payload)
         return sentence
