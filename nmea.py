@@ -2,8 +2,6 @@
 # https://gpsd.gitlab.io/gpsd/NMEA.html#_xdr_transducer_measurement
 # https://www.eye4software.com/hydromagic/documentation/articles-and-howtos/handling-nmea0183-xdr/
 
-import pprint
-
 class nmea:
     """
     Library for creating NMEA sentences from sensor data.
@@ -53,7 +51,7 @@ class nmea:
         sentence += checksum +"\n"
         if len(sentence) > 82:
             print("Sentence too long")
-            return -1
+            return "-1"
         return sentence.upper()
     
     def create_checksum(self, sentence: str) -> str: #TODO actually create a checksum
@@ -64,30 +62,18 @@ class nmea:
         checksum = "*" + f"{crc:02}"
         return checksum
     
-    def get_talker_ids(self, print: bool=False) -> dict:
+    def get_talker_ids(self) -> dict:
         """
-        Return valid talker IDs, optionally also pretty print to stdout
+        Return valid talker IDs
         """
-        if print:
-            self.pprint_dict(self.talker_ids)
         return self.talker_ids   
 
-    def get_sentence_ids(self, print: bool=False) -> dict:
+    def get_sentence_ids(self) -> dict:
         """
-        Return valid sentence IDs, optionally also pretty print to stdout
+        Return valid sentence IDs
         """
-        if print:
-            self.pprint_dict(self.sentence_ids)
         return self.sentence_ids
     
-    def pprint_dict(self, dict_data: dict) -> None:
-        """
-        Pretty prints a dictionary
-        """
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(dict_data)
-        return None
-
 class xdr:
     """
     Class for generating NMEA sentences for transducer measurements
@@ -126,21 +112,17 @@ class xdr:
         self.xdr_payload = []
         return None
     
-    def get_transducer_types(self, print: bool=False) -> dict:
+    def get_transducer_types(self) -> dict:
         """
-        Return valid transducer types, optionally also pretty print to stdout
+        Return valid transducer types
         """
-        if print:
-            self.nm.pprint_dict(self.transducer_types)
-        return self.talker_ids
+        return self.transducer_types
     
-    def get_units(self, print: bool=False) -> dict:
+    def get_units(self) -> dict:
         """
-        Return valid units, optionally also pretty print to stdout
+        Return valid units
         """
-        if print:
-            self.nm.pprint_dict(self.units)
-        return self.talker_ids
+        return self.units
     
     def construct_xdr_sentence(self, talkerid: str, payload: list) -> str:
         """
