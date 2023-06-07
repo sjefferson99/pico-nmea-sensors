@@ -109,7 +109,7 @@ wlan_ip = wlan.ifconfig()[0]
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setblocking(False)
-server.bind((wlan_ip, 2000))
+server.bind((wlan_ip, config.tcp_port))
 server.listen(1)
 print(server)
 connections = []
