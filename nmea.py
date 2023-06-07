@@ -168,8 +168,7 @@ class xdr:
         Temperature in degrees Celsuis, pressure in Bar and relative humidity in %
         """
         self.append_xdr_payload("C", temperature, "C", "AIRTEMP")
-        self.append_xdr_payload("P", pressure, "B", "BARO")
-        self.append_xdr_payload("P", (pressure / 100), "P", "BARO")
+        self.append_xdr_payload("P", pressure / 1000, "B", "BARO")
         self.append_xdr_payload("H", humidity, "P", "HUMIDITY")
         sentence = self.construct_xdr_sentence("$YX", self.xdr_payload)
         return sentence

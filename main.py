@@ -6,7 +6,8 @@ import math
 import rp2
 import ubinascii
 from nmea import xdr
-import random
+from breakout_bme280 import BreakoutBME280
+from pimoroni_i2c import PimoroniI2C
 
 def reconnect_wifi(ssid, password, country):
 
@@ -99,6 +100,9 @@ def connect_to_wifi() -> network.WLAN:
         print("  - took", seconds_to_connect, "seconds to connect to wifi")
     return wlan
 
+# Init sensor I2C
+i2c = PimoroniI2C(**config.i2c_pins)
+bme = BreakoutBME280(i2c)
 
 wlan = connect_to_wifi()
 wlan_ip = wlan.ifconfig()[0]
@@ -112,7 +116,13 @@ connections = []
 
 nmea_weather = xdr()
 
-while True:
+while True: # TODO work out socket set up so it can handle more than one connection and doesn't crash on client disconnect
+    # Take sensor readings
+    temperature, pressure, humidity = bme.read()
+    temperature = round(temperature, 2)
+    pressure = round(pressure / 100, 2)
+    humidity = round(humidity, 2)
+
     try:
         connection, address = server.accept()
         connection.setblocking(False)
@@ -121,7 +131,7 @@ while True:
         pass
 
     for connection in connections:
-        sentence = nmea_weather.send_weather_data(random.randint(-50,450) / 10, random.randint(9500,10500) / 10000, random.randint(20,100))
+        sentence = nmea_weather.send_weather_data(temperature, pressure, humidity)
         connection.send(sentence)
     
     time.sleep(5)
