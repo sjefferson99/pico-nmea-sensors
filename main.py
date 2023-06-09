@@ -134,4 +134,4 @@ while True: # TODO work out socket set up so it can handle more than one connect
         sentence = nmea_weather.send_weather_data(temperature, pressure, humidity)
         connection.send(sentence)
     
-    time.sleep(5)
+    time.sleep(1)
